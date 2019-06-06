@@ -27,7 +27,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the item data for this position
         final Book book = getItem(position);
-        // Check if an existing view is being reussed, otherwise inflate the view
+        // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder;
         if(convertView == null){
             viewHolder = new ViewHolder();
@@ -43,7 +43,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
         // Populate the data into the template view using the data object
         viewHolder.tvTitle.setText(book.getTitle());
         viewHolder.tvAuthor.setText(book.getAuthor());
-        Picasso.with(getContext()).load(Uri.parse(book.getCoverUrl()));
+        Picasso.with(getContext()).load(Uri.parse(book.getCoverUrl())).error(R.drawable.ic_nocover).into(viewHolder.ivCover);
         // Return the complete view to render on screen
         return convertView;
     }

@@ -55,7 +55,7 @@ public class Book {
         return book;
     }
 
-    // Return comma seprted author list when there is more than one author
+    // Return comma separated author list when there is more than one author
         private static String getAuthor (JSONObject jsonObject){
         try{
             final JSONArray authors = jsonObject.getJSONArray("author_name");
