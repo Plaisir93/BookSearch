@@ -7,6 +7,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -21,6 +22,7 @@ import cz.msebera.android.httpclient.Header;
 public class BookListActivity extends AppCompatActivity {
     private ListView lvBooks;
     private BookAdapter bookAdapter;
+    private ProgressBar progressBar;
 
     private BookClient client;
 
@@ -35,11 +37,15 @@ public class BookListActivity extends AppCompatActivity {
 
         // Fetch the data remotely
         //fetchBooks();
+        progressBar = (ProgressBar) findViewById(R.id.progress);
     }
 
     // Executes an API cll to the OpenLibrary search endpoint, parses the results
     // Convert them into an array of book objects and adds them to the adapter
     private void fetchBooks(String query){
+        // Show progress bar before making network request
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
         client = new BookClient();
         client.getBooks(query, new JsonHttpResponseHandler(){
             @Override
