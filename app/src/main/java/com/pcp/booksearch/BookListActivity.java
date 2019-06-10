@@ -1,11 +1,14 @@
 package com.pcp.booksearch;
 
+import android.content.Intent;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 public class BookListActivity extends AppCompatActivity {
+    public static final String BOOK_DETAIL_KEY = "book";
     private ListView lvBooks;
     private BookAdapter bookAdapter;
     private ProgressBar progressBar;
@@ -38,6 +42,19 @@ public class BookListActivity extends AppCompatActivity {
         // Fetch the data remotely
         //fetchBooks();
         progressBar = (ProgressBar) findViewById(R.id.progress);
+        setupBookSelectedListener();
+    }
+
+    public void setupBookSelectedListener(){
+        lvBooks.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Launch the detail view passing book as an extra
+                Intent intent = new Intent(BookListActivity.this, BookDetailActivity.class);
+                intent.putExtra(BOOK_DETAIL_KEY, bookAdapter.getItem(position));
+                startActivity(intent);
+            }
+        });
     }
 
     // Executes an API cll to the OpenLibrary search endpoint, parses the results
@@ -51,6 +68,8 @@ public class BookListActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try{
+                    // hide progress bar
+                    progressBar.setVisibility(ProgressBar.GONE);
                     JSONArray docs = null;
                     if (response != null){
                         docs = response.getJSONArray("docs");
@@ -65,9 +84,14 @@ public class BookListActivity extends AppCompatActivity {
                         bookAdapter.notifyDataSetChanged();
                     }
                 }catch (JSONException e){
+                    // Invalid JSON format, show appropriate error
                     e.printStackTrace();
                 }
-                super.onSuccess(statusCode, headers, response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                progressBar.setVisibility(ProgressBar.GONE);
             }
         });
     }
